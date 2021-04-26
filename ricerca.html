@@ -1,0 +1,313 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Ricerca - OpenStreeMaps</title>
+    <script type="text/javascript" src="Dati/Dati.js"></script>
+
+    <style>
+
+        /* --------------- Iframe Responsive ----------------------*/
+
+            .osm-maps {
+        position: relative;
+        padding-bottom: 45%; 
+        height: 0;
+        overflow: hidden;
+        }
+            .osm-maps iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        }
+
+        /* ------------------- Select -------------------------- */
+
+        select
+        {
+            width: 15%;
+            border: 2px solid #ccc;
+            box-sizing: border-box;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: white;
+            background-image: url('ico/selecticon.png');
+            background-position: 10px 10px;
+            background-repeat: no-repeat;
+            padding: 12px 20px 12px 40px;
+        }
+
+        /* ------------------- INPUTBOX ------------------------ */
+
+        input[type=text] {
+            width: 20%;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: white;
+            background-image: url('ico/searchicon.png');
+            background-position: 10px 10px;
+            background-repeat: no-repeat;
+            padding: 12px 20px 12px 40px;
+            -webkit-transition: width 0.4s ease-in-out;
+            transition: width 0.4s ease-in-out;
+        }
+
+            input[type=text]:focus {
+                width: 84%;
+            }
+
+
+        /* -------------------- Alert Box --------------------- */
+
+        .alert {
+            padding: 20px;
+            background-color: #f44336;
+            color: white;
+        }
+
+        .closebtn {
+            margin-left: 15px;
+            color: white;
+            font-weight: bold;
+            float: right;
+            font-size: 25px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+            .closebtn:hover {
+                color: black;
+            }
+
+            body{font-family:Arial;font-size:20px;overflow: hidden;}
+    </style>
+
+    <script>
+
+        // ------------------- Variabili Globali ------------------------------ \\
+
+        var puntitrovati=new Array();
+        var numpuntitrovati = -1;
+
+
+        // ------------------------- Metodo Scelta ------------------------------------ \\
+
+        // viene creato dinamicamante il campo di ricerca e il metodo corrispondente
+		$(document).ready(function (){
+            $("#select1").click(function (sel1){
+            var s;
+            switch (sel1) {
+                case 0:
+                    s = "<input  id='Text1' type='text' onkeypress='if (event.keyCode == 13) VisualizzaProvStati(Text1.value)' placeholder='Inserisci lo stato...' />"
+                    break;
+
+                case 1:
+                    VisualizzaCapitali("#");
+                    s = "<input  id=\"Text1\" type=\"text\" value=\"\" onkeypress=\"if (event.keyCode == 13) VisualizzaCapitali(Text1.value)\" placeholder=\"Inserisci un continente...\" />"
+                    break;
+
+                case 2:
+                    VisualizzaPop("#");
+                    s = "<input  id=\"Text1\" type=\"text\" value=\"\" onkeypress=\"if (event.keyCode == 13) VisualizzaPop(Text1.value)\" placeholder=\"Inserisci un continente...\" />"
+                    break;
+
+                case 3:
+                visualizzaPiuPopolosaMondo("#");
+                    s = "<input  id=\"Text1\" type=\"text\" value=\"\" onkeypress=\"if (event.keyCode == 13) visualizzaPiuPopolosaMondo(Text1.value)\" placeholder=\"Inserisci un continente...\" />"
+                    break;
+            }
+
+            document.getElementById("P1").innerHTML = s;
+            });
+        });
+
+
+        // -------------------- Medodi Di Ricerca ------------------------------ \\
+
+        // 1 \\
+        $(document).ready(function () {
+            puntitrovati = [];  // azzera vettore
+            numpuntitrovati = -1;
+
+            chiave = chiave.toUpperCase();
+
+            for (var i = 0; i < DB.Punti.length; i++) {
+
+                des = DB.Punti[i].SOV0NAME.toUpperCase();
+                if (des.indexOf(chiave) >= 0) {
+                    numpuntitrovati++;
+                    puntitrovati[numpuntitrovati] = DB.Punti[i];
+                }
+            }
+            MostraAlert(numpuntitrovati);
+        });
+            
+        
+
+        // 2 \\
+        $(document).ready(function () {
+            var cont;
+            puntitrovati = [];
+            numpuntitrovati = -1;
+            if (chiave == "#") {
+               for (var i = 0; i < DB.Punti.length; i++) {
+                    des = DB.Punti[i].FEATURECLA;
+                    if (des == "Admin-0 capital") {
+                        numpuntitrovati++;
+                        puntitrovati[numpuntitrovati] = DB.Punti[i];
+                    }
+                }			
+            }
+            else {
+                cont = "";
+                chiave = chiave.toUpperCase();
+                switch (chiave)
+                {
+                    case "EUROPA":
+                        cont = "EUROPE/";
+                        break;
+                    case "AMERICA":
+                        cont = "AMERICA/";
+                        break;
+                    case "ASIA":
+                        cont = "ASIA/";
+                        break;
+                    case "AFRICA":
+                        cont = "AFRICA/";
+                        break;
+                    default:
+                        cont = "#########";
+                        break;
+                }
+                for (var i = 0; i < DB.Punti.length; i++) {
+                    des = DB.Punti[i].FEATURECLA;
+                    des1 = DB.Punti[i].TIMEZONE.toUpperCase();
+                    if ((des == "Admin-1 capital") && (des1.indexOf(cont) >= 0)) {
+                        numpuntitrovati++;
+                        puntitrovati[numpuntitrovati] = DB.Punti[i];
+                    }
+                }   
+            }
+			MostraAlert(numpuntitrovati);
+        });
+           
+        
+
+        // 3 \\
+        $(document).ready(function () {
+            chiave= chiave.toUpperCase();
+            switch (chiave)
+                {
+                    case "EUROPA":
+                        chiave = "EUROPE/";
+                        break;
+                    case "AMERICA":
+                        chiave = "AMERICA/";
+                        break;
+                    case "ASIA":
+                        chiave = "ASIA/";
+                        break;
+                    case "AFRICA":
+                        chiave = "AFRICA/";
+                        break;
+                    default:
+                        chiave = "#########";
+                        break;
+                }
+
+            puntitrovati= new Array();
+            numpuntitrovati = -1;
+            for (i = 0; i < DB.Punti.length; i++) 
+            {
+                des = DB.Punti[i].POP_MAX;
+                continente = DB.Punti[i].TIMEZONE.toUpperCase();
+
+                if (des >= "4000000" && continente.indexOf(chiave)>=0) 
+                {
+                    numpuntitrovati++;
+                    puntitrovati[numpuntitrovati] = DB.Punti[i];
+                }
+            }
+            //document.getElementById("P1").innerHTML = s;
+            mappaPunti();
+        });
+        
+            
+        
+
+        $(document).ready(function () {
+            puntitrovati=new Array();
+            numpuntitrovati = -1;
+            pos=0;
+            attualeMax=0;
+
+            for (i = 0; i < DB.Punti.length; i++)
+            {
+                newPop = DB.Punti[i].POP_MAX;
+                
+                if (newPop>attualeMax) 
+                {
+                    attualeMax=newPop;
+                    pos=i;
+                }
+            }
+            numpuntitrovati++;
+            puntitrovati[numpuntitrovati] = DB.Punti[pos];
+            //document.getElementById("P1").innerHTML = s;
+            mappaPunti();
+        });
+        
+            
+        
+
+       
+		// ----- Passaggio dei punti trovati al frame che contiene la mappa--- \\
+        
+        function mappaPunti() {
+            var frame = document.getElementById('mappa');
+
+            frame.contentWindow.postMessage(puntitrovati, '*');
+
+        }
+
+        // ----------------- Controllo alert ---------------------------------- \\
+
+        function MostraAlert(numero) {
+            if (numero > 0) {
+                mappaPunti();
+                document.getElementById("Alert").innerHTML = "punti trovati: " + numero;
+            }
+            else {
+                document.getElementById("Alert").innerHTML = "<div class='alert'><span class='closebtn' onclick='this.parentElement.style.display=" + "\"none\"" + ";Text1.value = \"\";'>&times;</span><strong>Attenzione!</strong> Indicare uno Stato/Continente corretto!</div>"
+            }
+
+        }
+
+    </script>
+</head>
+<body onload="ScegliMetodo(0); mappaPunti();">
+
+        <select id="select1" width="20%" name="Scelta" onChange="ScegliMetodo(select1.selectedIndex)">
+            <option value="0">Ricerca Stato</option>
+            <option value="1">Ricerca Capitali</option>
+            <option value="2">Ricerca Pop > 4M</option>
+            <option value="3">Ricerca Città più popolate</option>
+        </select>
+    <span id="P1">
+        <!--<input id="Text1" type="text" value="" onkeypress="if (event.keyCode == 13) visualizza(Text1.value), mappaPunti()" placeholder="Inserisci un continente..." />-->
+    </span>
+    <!-- *********************************************** InputBox *************************************************************** -->
+    
+    <hr />
+    <p id="Alert"></p>
+    <div class="osm-maps">
+        <center><iframe id="mappa" src="mappa_osm.htm" width="500" height="225" frameborder="0" style="border:0" scrolling="no"></iframe></center>
+    </div>
+</body>
+</html>

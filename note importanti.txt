@@ -1,0 +1,11 @@
+Specifiche del progetto
+In un'unica pagina fornire la possibilità all'utente di fare alcune ricerche:
+a) ricerca delle città specificando lo stato (es: "tutte le città italiane)
+b) ricerca di tutte le capitali del mondo
+c) ricerca di tutte le capitali di un continente
+d) ricerca di tutte le città con popolazione maggiore di 4M (milioni) di abitanti
+e) ricerca della città più popolosa (al mondo o in un continente) 
+
+Confrontare i dati ottenuti con quelli proposti nei link:
+https://en.wikipedia.org/wiki/List_of_cities_proper_by_population
+https://it.wikipedia.org/wiki/Stati_per_popolazione
